@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// PDFs e imagens de assinatura são artefatos de evidência: só o servidor
+// (Admin SDK / Cloud Functions) escreve nesses caminhos. O cliente só lê.
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function belongsToOrg(orgId) {
+      return isSignedIn() && request.auth.token.orgId == orgId;
+    }
+
+    match /organizations/{orgId}/branding/{fileName} {
+      allow read: if belongsToOrg(orgId);
+      allow write: if belongsToOrg(orgId) && request.resource.size < 5 * 1024 * 1024;
+    }
+
+    match /organizations/{orgId}/templates/{templateId}/assets/{fileName} {
+      allow read, write: if belongsToOrg(orgId);
+    }
+
+    match /organizations/{orgId}/contracts/{contractId}/document.pdf {
+      allow read: if belongsToOrg(orgId);
+      allow write: if false;
+    }
+
+    match /organizations/{orgId}/contracts/{contractId}/signatures/{fileName} {
+      allow read: if belongsToOrg(orgId);
+      allow write: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
