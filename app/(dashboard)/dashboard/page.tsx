@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/design-system/compon
 import { EmptyState } from "@/design-system/components/empty-state";
 import { verifySession } from "@/lib/auth/dal";
 import { listClients } from "@/features/clients/repositories/client-repository";
+import { listContracts } from "@/features/contracts/repositories/contract-repository";
 
 export const metadata: Metadata = {
   title: "Dashboard — ContractFlow",
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
 export default async function DashboardPage() {
   const session = await verifySession();
   const firstName = (session.name ?? session.email).split(" ")[0];
-  const clients = await listClients(session.organizationId);
+  const [clients, contracts] = await Promise.all([
+    listClients(session.organizationId),
+    listContracts(session.organizationId),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -31,11 +35,30 @@ export default async function DashboardPage() {
             <CardTitle>Contratos</CardTitle>
           </CardHeader>
           <CardContent>
-            <EmptyState
-              icon={FileText}
-              title="Nenhum contrato ainda"
-              description="Crie um modelo e gere seu primeiro contrato para começar."
-            />
+            {contracts.length === 0 ? (
+              <EmptyState
+                icon={FileText}
+                title="Nenhum contrato ainda"
+                description="Crie um modelo e gere seu primeiro contrato para começar."
+                action={
+                  <Button asChild size="sm">
+                    <Link href="/contracts/new">Criar contrato</Link>
+                  </Button>
+                }
+              />
+            ) : (
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-3xl font-semibold text-foreground">{contracts.length}</p>
+                  <p className="text-sm text-foreground-muted">
+                    {contracts.length === 1 ? "contrato criado" : "contratos criados"}
+                  </p>
+                </div>
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/contracts">Ver todos</Link>
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 

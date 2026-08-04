@@ -42,11 +42,18 @@ export const getOptionalSession = cache(async (): Promise<SessionContext | null>
   }
 });
 
-/** Use em Server Components/layouts protegidos: redireciona para /login se não houver sessão válida. */
+/**
+ * Use em Server Components/layouts protegidos: redireciona para /login se
+ * não houver sessão válida. Quando existe um cookie mas ele é inválido,
+ * redireciona para a rota que o limpa antes de ir para /login — do
+ * contrário o `proxy.ts` (que só checa a presença do cookie) manda de
+ * volta para a rota protegida e forma um loop de redirecionamento.
+ */
 export async function verifySession(): Promise<SessionContext> {
   const session = await getOptionalSession();
   if (!session) {
-    redirect("/login");
+    const staleCookie = await getSessionCookie();
+    redirect(staleCookie ? "/auth/clear-session" : "/login");
   }
   return session;
 }

@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, LayoutTemplate, Users } from "lucide-react";
+import { FileText, LayoutDashboard, LayoutTemplate, Users } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 
-// Contratos entra aqui quando a Fase 5 for implementada.
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/contracts", label: "Contratos", icon: FileText },
   { href: "/clients", label: "Clientes", icon: Users },
   { href: "/templates", label: "Modelos", icon: LayoutTemplate },
 ];

@@ -25,6 +25,13 @@ export async function listClients(organizationId: string): Promise<Client[]> {
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
+export async function getClient(organizationId: string, clientId: string): Promise<Client | null> {
+  const snapshot = await clientsCollection().doc(clientId).get();
+  const data = snapshot.data();
+  if (!data || data.organizationId !== organizationId) return null;
+  return data;
+}
+
 export async function createClient(
   organizationId: string,
   createdBy: string,
