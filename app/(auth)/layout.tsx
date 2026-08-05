@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getOptionalSession } from "@/lib/auth/dal";
+import { ThemeToggle } from "@/design-system/components/theme-toggle";
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const session = await getOptionalSession();
@@ -9,6 +10,9 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background-subtle px-4">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <div className="w-full max-w-sm rounded-xl border border-border bg-card p-8 shadow-sm">
         <div className="mb-6 flex flex-col items-center gap-1 text-center">
           <span className="text-xl font-semibold text-foreground">PARTENARIAT</span>
