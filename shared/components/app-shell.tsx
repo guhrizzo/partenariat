@@ -14,17 +14,17 @@ export function AppShell({ organizationName, userName, children }: AppShellProps
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-background-subtle">
-      <AppSidebar className="hidden w-64 shrink-0 border-r border-border bg-card lg:flex" />
+    <div className="flex min-h-screen bg-background">
+      <AppSidebar className="hidden h-screen w-56 shrink-0 border-r border-border bg-background-subtle dark:bg-panel lg:flex" />
 
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 flex lg:hidden">
           <div
-            className="fixed inset-0 bg-black/40"
+            className="fixed inset-0 cursor-pointer bg-black/60"
             onClick={() => setSidebarOpen(false)}
             aria-hidden="true"
           />
-          <AppSidebar className="relative z-50 w-64 border-r border-border bg-card" />
+          <AppSidebar className="relative z-50 w-64 border-r border-border bg-background-subtle dark:bg-panel" />
         </div>
       )}
 

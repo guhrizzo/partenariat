@@ -36,6 +36,47 @@ export async function getContract(organizationId: string, contractId: string): P
   }
 }
 
+/**
+ * Busca pública por token — sem `organizationId`, o token de 256 bits É a
+ * autorização. Contratos em `draft` nunca foram enviados, então tratamos
+ * como inexistentes para não vazar a existência de rascunhos. Expiração é
+ * checada de forma preguiçosa (na leitura), sem depender de um job agendado.
+ */
+export async function getContractByToken(token: string): Promise<Contract | null> {
+  const snapshot = await contractsCollection().where("publicToken", "==", token).limit(1).get();
+  if (snapshot.empty) return null;
+
+  const contract = snapshot.docs[0].data();
+  if (contract.status === "draft") return null;
+
+  const isExpirable = contract.status === "sent" || contract.status === "viewed";
+  if (isExpirable && contract.tokenExpiresAt.getTime() < Date.now()) {
+    await contractsCollection().doc(contract.id).update({ status: "expired" });
+    return { ...contract, status: "expired" };
+  }
+
+  return contract;
+}
+
+/** Idempotente: só transiciona de "sent" para "viewed", nunca regride um status mais avançado. */
+export async function markContractViewed(contractId: string): Promise<void> {
+  const ref = contractsCollection().doc(contractId);
+  const snapshot = await ref.get();
+  if (snapshot.data()?.status === "sent") {
+    await ref.update({ status: "viewed", viewedAt: new Date() });
+  }
+}
+
+export async function signContract(contractId: string, documentHash: string): Promise<void> {
+  const ref = contractsCollection().doc(contractId);
+  const snapshot = await ref.get();
+  const data = snapshot.data();
+  if (!data || (data.status !== "sent" && data.status !== "viewed")) {
+    throw new Error("Este contrato não pode mais ser assinado.");
+  }
+  await ref.update({ status: "signed", signedAt: new Date(), documentHash });
+}
+
 interface CreateContractRepoInput {
   templateId: string;
   templateVersion: number;
@@ -62,6 +103,7 @@ export async function createContract(
     publicToken: generateSecureToken(),
     tokenExpiresAt: new Date(now.getTime() + TOKEN_TTL_MS),
     pdfUrl: null,
+    validationCode: null,
     createdAt: now,
     sentAt: null,
     viewedAt: null,
@@ -97,4 +139,19 @@ export async function deleteContract(organizationId: string, contractId: string)
     throw new Error("Apenas rascunhos podem ser removidos.");
   }
   await contractsCollection().doc(contractId).delete();
+}
+
+/** Página pública /validate/[codigo] — o código é público por natureza (impresso no PDF), sem `organizationId`. */
+export async function getContractByValidationCode(code: string): Promise<Contract | null> {
+  const snapshot = await contractsCollection().where("validationCode", "==", code).limit(1).get();
+  if (snapshot.empty) return null;
+  return snapshot.docs[0].data();
+}
+
+export async function setContractPdf(
+  contractId: string,
+  pdfUrl: string,
+  validationCode: string
+): Promise<void> {
+  await contractsCollection().doc(contractId).update({ pdfUrl, validationCode });
 }

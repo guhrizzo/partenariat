@@ -21,6 +21,8 @@ export interface Contract {
   publicToken: string;
   tokenExpiresAt: Date;
   pdfUrl: string | null;
+  /** Código curto e legível por humanos, impresso no PDF para uso em /validate/[codigo]. */
+  validationCode: string | null;
   createdAt: Date;
   sentAt: Date | null;
   viewedAt: Date | null;

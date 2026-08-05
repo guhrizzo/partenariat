@@ -19,6 +19,12 @@ export function NewTemplateDialog() {
   const [name, setName] = React.useState("");
   const { createTemplate, isPending } = useCreateTemplate();
 
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (isPending || name.trim().length < 2) return;
+    createTemplate(name);
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -31,24 +37,21 @@ export function NewTemplateDialog() {
         <DialogHeader>
           <DialogTitle>Novo modelo</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="template-name">Nome</Label>
             <Input
               id="template-name"
+              autoFocus
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="ex: Contrato de Prestação de Serviços"
             />
           </div>
-          <Button
-            type="button"
-            disabled={isPending || name.trim().length < 2}
-            onClick={() => createTemplate(name)}
-          >
+          <Button type="submit" disabled={isPending || name.trim().length < 2}>
             {isPending ? "Criando..." : "Criar e editar"}
           </Button>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

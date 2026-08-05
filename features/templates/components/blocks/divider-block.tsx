@@ -1,3 +1,7 @@
 export function DividerBlockComponent() {
-  return <hr className="border-border" />;
+  return (
+    <div className="flex items-center py-3">
+      <hr className="flex-1 border-border" />
+    </div>
+  );
 }

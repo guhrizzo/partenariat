@@ -6,7 +6,7 @@ import { getClient } from "@/features/clients/repositories/client-repository";
 import { ContractsDataTable, type ContractRow } from "@/features/contracts/components";
 
 export const metadata: Metadata = {
-  title: "Contratos — ContractFlow",
+  title: "Contratos — PARTENARIAT",
 };
 
 export default async function ContractsPage() {

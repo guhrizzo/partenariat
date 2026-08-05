@@ -53,7 +53,7 @@ export function ContractsDataTable({ rows }: { rows: ContractRow[] }) {
       render: (row) => (
         <Link
           href={`/contracts/${row.contract.id}`}
-          className="font-medium text-foreground hover:text-primary hover:underline"
+          className="cursor-pointer font-medium text-foreground hover:text-primary hover:underline"
         >
           {row.templateName}
         </Link>

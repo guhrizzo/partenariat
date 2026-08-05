@@ -7,7 +7,7 @@ import { DEFAULT_FIELD_DEFINITIONS } from "@/features/templates/constants/defaul
 import { TemplateEditor } from "@/features/templates/components";
 
 export const metadata: Metadata = {
-  title: "Editar modelo — ContractFlow",
+  title: "Editar modelo — PARTENARIAT",
 };
 
 interface TemplateEditorPageProps {

@@ -144,7 +144,7 @@ export function BlockCanvas({
               items={blocks.map((block) => block.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 py-1 pl-8 pr-10">
                 {blocks.map((block) => (
                   <BlockWrapper
                     key={block.id}

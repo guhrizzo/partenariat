@@ -24,7 +24,7 @@ export function HeadingBlockComponent({ block, onChange }: HeadingBlockProps) {
             type="button"
             onClick={() => onChange({ ...block, level })}
             className={cn(
-              "rounded px-1.5 py-0.5 text-xs font-medium text-foreground-muted hover:bg-background-subtle",
+              "cursor-pointer rounded px-1.5 py-0.5 text-xs font-medium text-foreground-muted hover:bg-background-subtle",
               block.level === level && "bg-primary/10 text-primary"
             )}
           >

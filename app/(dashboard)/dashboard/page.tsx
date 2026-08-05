@@ -9,7 +9,7 @@ import { listClients } from "@/features/clients/repositories/client-repository";
 import { listContracts } from "@/features/contracts/repositories/contract-repository";
 
 export const metadata: Metadata = {
-  title: "Dashboard — ContractFlow",
+  title: "Dashboard — PARTENARIAT",
 };
 
 export default async function DashboardPage() {

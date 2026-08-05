@@ -18,14 +18,14 @@ export function TableBody({ className, ...props }: React.HTMLAttributes<HTMLTabl
 }
 
 export function TableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) {
-  return <tr className={cn("transition-colors hover:bg-background-subtle", className)} {...props} />;
+  return <tr className={cn("transition-colors hover:bg-panel-hover", className)} {...props} />;
 }
 
 export function TableHead({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
     <th
       className={cn(
-        "h-11 px-4 text-left align-middle text-xs font-medium uppercase tracking-wide text-foreground-muted",
+        "h-9 px-3 text-left align-middle text-[11px] font-semibold uppercase tracking-wider text-foreground-muted",
         className
       )}
       {...props}
@@ -34,5 +34,5 @@ export function TableHead({ className, ...props }: React.ThHTMLAttributes<HTMLTa
 }
 
 export function TableCell({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
-  return <td className={cn("p-4 align-middle text-foreground", className)} {...props} />;
+  return <td className={cn("px-3 py-2 align-middle text-[13px] text-foreground", className)} {...props} />;
 }

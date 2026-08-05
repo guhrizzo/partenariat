@@ -25,7 +25,7 @@ function initials(name: string) {
 
 export function AppHeader({ organizationName, userName, onOpenSidebar }: AppHeaderProps) {
   return (
-    <header className="flex h-16 items-center justify-between gap-4 border-b border-border bg-card px-4 sm:px-6">
+    <header className="flex h-11 items-center justify-between gap-4 border-b border-border bg-background-subtle px-3 dark:bg-panel-header sm:px-4">
       <div className="flex items-center gap-3">
         <Button
           type="button"
@@ -37,18 +37,28 @@ export function AppHeader({ organizationName, userName, onOpenSidebar }: AppHead
         >
           <Menu />
         </Button>
-        <span className="hidden text-sm font-medium text-foreground sm:block">{organizationName}</span>
+        <span className="hidden text-[13px] font-medium text-foreground sm:block">{organizationName}</span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <ThemeToggle />
-        <Avatar>
-          <AvatarFallback>{initials(userName)}</AvatarFallback>
-        </Avatar>
+        <button
+          type="button"
+          aria-label="Sair"
+          className="flex size-8 cursor-pointer items-center justify-center rounded-sm text-foreground-muted transition-colors hover:bg-panel-hover hover:text-foreground"
+        >
+          <Avatar className="size-7">
+            <AvatarFallback>{initials(userName)}</AvatarFallback>
+          </Avatar>
+        </button>
         <form action={logoutAction}>
-          <Button type="submit" variant="ghost" size="icon" aria-label="Sair">
-            <LogOut />
-          </Button>
+          <button
+            type="submit"
+            aria-label="Sair"
+            className="flex size-8 cursor-pointer items-center justify-center rounded-sm text-foreground-muted transition-colors hover:bg-panel-hover hover:text-foreground"
+          >
+            <LogOut className="size-4" />
+          </button>
         </form>
       </div>
     </header>

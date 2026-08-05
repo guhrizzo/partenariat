@@ -15,13 +15,13 @@ export function DialogContent({ className, children, ...props }: DialogPrimitive
       <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/40" />
       <DialogPrimitive.Content
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card p-6 shadow-lg focus:outline-none",
+          "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-md border border-border bg-card p-5 shadow-2xl focus:outline-none",
           className
         )}
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-md text-foreground-muted transition-colors hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+        <DialogPrimitive.Close className="absolute right-3 top-3 cursor-pointer rounded-sm text-foreground-muted transition-colors hover:bg-panel-hover hover:text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-primary">
           <X className="size-4" />
           <span className="sr-only">Fechar</span>
         </DialogPrimitive.Close>
@@ -36,16 +36,16 @@ export function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLD
 
 export function DialogTitle({ className, ...props }: DialogPrimitive.DialogTitleProps) {
   return (
-    <DialogPrimitive.Title className={cn("text-lg font-semibold text-foreground", className)} {...props} />
+    <DialogPrimitive.Title className={cn("text-base font-semibold text-foreground", className)} {...props} />
   );
 }
 
 export function DialogDescription({ className, ...props }: DialogPrimitive.DialogDescriptionProps) {
   return (
-    <DialogPrimitive.Description className={cn("text-sm text-foreground-muted", className)} {...props} />
+    <DialogPrimitive.Description className={cn("text-[13px] text-foreground-muted", className)} {...props} />
   );
 }
 
 export function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mt-6 flex justify-end gap-2", className)} {...props} />;
+  return <div className={cn("mt-5 flex justify-end gap-2", className)} {...props} />;
 }

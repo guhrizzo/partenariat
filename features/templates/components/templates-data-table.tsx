@@ -29,7 +29,7 @@ export function TemplatesDataTable({ templates }: { templates: Template[] }) {
       render: (template) => (
         <Link
           href={`/templates/${template.id}`}
-          className="font-medium text-foreground hover:text-primary hover:underline"
+          className="cursor-pointer font-medium text-foreground hover:text-primary hover:underline"
         >
           {template.name}
         </Link>

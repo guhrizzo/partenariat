@@ -16,9 +16,12 @@ export function AppSidebar({ className }: { className?: string }) {
   const pathname = usePathname();
 
   return (
-    <nav className={cn("flex h-full flex-col gap-1 p-4", className)}>
-      <Link href="/dashboard" className="mb-4 px-2 text-lg font-semibold text-foreground">
-        ContractFlow
+    <nav className={cn("flex h-full flex-col gap-0.5 p-2", className)}>
+      <Link
+        href="/dashboard"
+        className="mb-2 flex cursor-pointer items-center px-2 py-1.5 text-[15px] font-semibold tracking-tight text-foreground"
+      >
+        PARTENARIAT
       </Link>
 
       {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
@@ -28,8 +31,9 @@ export function AppSidebar({ className }: { className?: string }) {
             key={href}
             href={href}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted transition-colors hover:bg-background-subtle hover:text-foreground",
-              isActive && "bg-primary/10 text-primary hover:bg-primary/10 hover:text-primary"
+              "flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-[13px] text-foreground-muted transition-colors hover:bg-panel-hover hover:text-foreground",
+              isActive &&
+                "bg-selection text-foreground hover:bg-selection hover:text-foreground dark:bg-selection"
             )}
           >
             <Icon className="size-4" />

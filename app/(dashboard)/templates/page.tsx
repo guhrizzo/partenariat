@@ -4,7 +4,7 @@ import { listTemplates } from "@/features/templates/repositories/template-reposi
 import { TemplatesDataTable } from "@/features/templates/components";
 
 export const metadata: Metadata = {
-  title: "Modelos — ContractFlow",
+  title: "Modelos — PARTENARIAT",
 };
 
 export default async function TemplatesPage() {

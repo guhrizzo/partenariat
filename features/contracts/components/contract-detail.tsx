@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Copy, Send, XCircle } from "lucide-react";
+import { ArrowLeft, BellRing, Copy, Download, Send, XCircle } from "lucide-react";
 import { Badge, type BadgeProps } from "@/design-system/components/badge";
 import { Button } from "@/design-system/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/design-system/components/card";
 import { BlockPreview } from "@/features/templates/components/block-preview";
 import { useToast } from "@/shared/providers/toast-provider";
-import { useCancelContract, useSendContract } from "@/features/contracts/hooks";
+import { useCancelContract, useRemindContract, useSendContract } from "@/features/contracts/hooks";
 import type { Client, Contract, Template } from "@/types";
 
 const STATUS_LABEL: Record<Contract["status"], string> = {
@@ -32,12 +32,14 @@ interface ContractDetailProps {
   contract: Contract;
   template: Template;
   client: Client;
+  pdfDownloadUrl: string | null;
 }
 
-export function ContractDetail({ contract, template, client }: ContractDetailProps) {
+export function ContractDetail({ contract, template, client, pdfDownloadUrl }: ContractDetailProps) {
   const { toast } = useToast();
   const { sendContract, isPending: isSending } = useSendContract();
   const { cancelContract, isPending: isCancelling } = useCancelContract();
+  const { remindContract, isPending: isReminding } = useRemindContract();
 
   const signPath = `/sign/${contract.publicToken}`;
 
@@ -69,7 +71,19 @@ export function ContractDetail({ contract, template, client }: ContractDetailPro
               {isSending ? "Enviando..." : "Enviar"}
             </Button>
           )}
-          {(contract.status === "draft" || contract.status === "sent") && (
+          {(contract.status === "sent" || contract.status === "viewed") && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isReminding}
+              onClick={() => remindContract(contract.id)}
+            >
+              <BellRing className="size-3.5" />
+              {isReminding ? "Enviando..." : "Enviar lembrete"}
+            </Button>
+          )}
+          {(contract.status === "draft" || contract.status === "sent" || contract.status === "viewed") && (
             <Button
               type="button"
               variant="outline"
@@ -95,6 +109,33 @@ export function ContractDetail({ contract, template, client }: ContractDetailPro
             <Button type="button" variant="outline" size="icon" onClick={copyLink} aria-label="Copiar link">
               <Copy className="size-4" />
             </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {contract.status === "signed" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Documento assinado</CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center justify-between gap-2">
+            <div>
+              <p className="text-sm text-foreground">
+                Código de validação: <span className="font-mono">{contract.validationCode ?? "—"}</span>
+              </p>
+              <p className="text-xs text-foreground-muted">
+                Hash: {contract.documentHash ? `${contract.documentHash.slice(0, 24)}...` : "—"}
+              </p>
+            </div>
+            {pdfDownloadUrl ? (
+              <Button asChild variant="outline" size="sm">
+                <a href={pdfDownloadUrl} target="_blank" rel="noopener noreferrer">
+                  <Download className="size-3.5" /> Baixar PDF
+                </a>
+              </Button>
+            ) : (
+              <span className="text-xs text-foreground-muted">PDF ainda não disponível</span>
+            )}
           </CardContent>
         </Card>
       )}

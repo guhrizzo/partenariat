@@ -1,18 +1,22 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/shared/utils/cn";
 
-const badgeVariants = cva("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium", {
-  variants: {
-    variant: {
-      default: "bg-background-subtle text-foreground-muted",
-      primary: "bg-primary/10 text-primary",
-      success: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-      warning: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-      destructive: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+const badgeVariants = cva(
+  "inline-flex items-center rounded-sm border px-2 py-0.5 text-[11px] font-medium uppercase tracking-wide",
+  {
+    variants: {
+      variant: {
+        default: "border-border bg-panel text-foreground-muted",
+        primary: "border-primary/40 bg-primary/15 text-primary",
+        success:
+          "border-emerald-500/40 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+        warning: "border-amber-500/40 bg-amber-500/15 text-amber-600 dark:text-amber-400",
+        destructive: "border-red-500/40 bg-red-500/15 text-red-600 dark:text-red-400",
+      },
     },
-  },
-  defaultVariants: { variant: "default" },
-});
+    defaultVariants: { variant: "default" },
+  }
+);
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,

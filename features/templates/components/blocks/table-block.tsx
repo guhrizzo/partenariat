@@ -62,7 +62,7 @@ export function TableBlockComponent({ block, onChange }: TableBlockProps) {
                   <button
                     type="button"
                     onClick={() => removeColumn(index)}
-                    className="absolute -top-2 right-0 hidden text-foreground-muted hover:text-red-600 group-hover/col:block"
+                    className="absolute -top-2 right-0 hidden cursor-pointer text-foreground-muted hover:text-red-600 group-hover/col:block"
                     aria-label="Remover coluna"
                   >
                     <X className="size-3" />
@@ -88,7 +88,7 @@ export function TableBlockComponent({ block, onChange }: TableBlockProps) {
                 <button
                   type="button"
                   onClick={() => removeRow(rowIndex)}
-                  className="hidden text-foreground-muted hover:text-red-600 group-hover/row:block"
+                  className="hidden cursor-pointer text-foreground-muted hover:text-red-600 group-hover/row:block"
                   aria-label="Remover linha"
                 >
                   <X className="size-3.5" />

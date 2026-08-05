@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ContractFlow",
+  title: "PARTENARIAT",
   description: "Gestão de contratos eletrônicos para freelancers, agências e pequenos negócios.",
 };
 

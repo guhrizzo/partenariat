@@ -36,7 +36,7 @@ export function ListBlockComponent({ block, onChange }: ListBlockProps) {
             type="button"
             onClick={() => onChange({ ...block, style })}
             className={cn(
-              "rounded px-1.5 py-0.5 text-xs font-medium text-foreground-muted hover:bg-background-subtle",
+              "cursor-pointer rounded px-1.5 py-0.5 text-xs font-medium text-foreground-muted hover:bg-background-subtle",
               block.style === style && "bg-primary/10 text-primary"
             )}
           >
@@ -55,7 +55,7 @@ export function ListBlockComponent({ block, onChange }: ListBlockProps) {
             <button
               type="button"
               onClick={() => removeItem(index)}
-              className="hidden text-foreground-muted hover:text-red-600 group-hover/item:block"
+              className="hidden cursor-pointer text-foreground-muted hover:text-red-600 group-hover/item:block"
               aria-label="Remover item"
             >
               <X className="size-3.5" />

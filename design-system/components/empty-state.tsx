@@ -13,16 +13,16 @@ export function EmptyState({ icon: Icon, title, description, action, className }
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border p-10 text-center",
+        "flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-border p-8 text-center",
         className
       )}
     >
-      <div className="flex size-12 items-center justify-center rounded-full bg-background-subtle text-foreground-muted">
-        <Icon className="size-6" />
+      <div className="flex size-10 items-center justify-center rounded-sm bg-panel text-foreground-muted">
+        <Icon className="size-5" />
       </div>
       <div className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-foreground">{title}</p>
-        {description && <p className="text-sm text-foreground-muted">{description}</p>}
+        <p className="text-[13px] font-medium text-foreground">{title}</p>
+        {description && <p className="text-[13px] text-foreground-muted">{description}</p>}
       </div>
       {action}
     </div>

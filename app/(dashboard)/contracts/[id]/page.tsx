@@ -4,10 +4,11 @@ import { verifySession } from "@/lib/auth/dal";
 import { getContract } from "@/features/contracts/repositories/contract-repository";
 import { getTemplate } from "@/features/templates/repositories/template-repository";
 import { getClient } from "@/features/clients/repositories/client-repository";
+import { getSignedDownloadUrl } from "@/lib/storage/signed-url";
 import { ContractDetail } from "@/features/contracts/components";
 
 export const metadata: Metadata = {
-  title: "Contrato — ContractFlow",
+  title: "Contrato — PARTENARIAT",
 };
 
 interface ContractDetailPageProps {
@@ -32,5 +33,9 @@ export default async function ContractDetailPage({ params }: ContractDetailPageP
     notFound();
   }
 
-  return <ContractDetail contract={contract} template={template} client={client} />;
+  const pdfDownloadUrl = contract.pdfUrl ? await getSignedDownloadUrl(contract.pdfUrl) : null;
+
+  return (
+    <ContractDetail contract={contract} template={template} client={client} pdfDownloadUrl={pdfDownloadUrl} />
+  );
 }

@@ -7,7 +7,7 @@ import { listClients } from "@/features/clients/repositories/client-repository";
 import { ContractWizard } from "@/features/contracts/components";
 
 export const metadata: Metadata = {
-  title: "Novo contrato — ContractFlow",
+  title: "Novo contrato — PARTENARIAT",
 };
 
 export default async function NewContractPage() {
