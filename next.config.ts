@@ -35,8 +35,12 @@ const cspHeader = `
 // do Next 16 não consegue resolver isso via empacotamento, gerando o
 // `ERR_REQUIRE_ESM` em runtime na Vercel. Mantemos o pacote fora do bundle
 // para que o Node faça o `require` direto em produção.
+// Incluímos `jose` e `jwks-rsa` explicitamente: o `serverExternalPackages`
+// do Next só externaliza o pacote listado, não as suas dependências
+// transitivas. Sem isso, o Turbopack ainda embute `jwks-rsa` (e portanto o
+// `require("jose")` que ele faz) dentro do bundle server-side.
 // https://nextjs.org/docs/app/api-reference/config/next-config-js/serverExternalPackages
-const serverExternalPackages = ["firebase-admin"];
+const serverExternalPackages = ["firebase-admin", "jwks-rsa", "jose"];
 
 const nextConfig: NextConfig = {
   experimental: {
