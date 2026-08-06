@@ -14,8 +14,13 @@ export function AppShell({ organizationName, userName, children }: AppShellProps
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <AppSidebar className="hidden h-screen w-56 shrink-0 border-r border-border bg-background-subtle dark:bg-panel lg:flex" />
+    // `items-stretch` (default no flex, mas explícito para garantir) +
+    // `min-h-screen` no pai: a sidebar estica até a altura do filho mais
+    // alto (o `<main>` quando o conteúdo do contrato é maior que a
+    // viewport). Sem o `items-stretch` explícito, alguns engines
+    // colapsam o stretch quando o irmão usa `flex-1 flex-col`.
+    <div className="flex min-h-screen items-stretch bg-background">
+      <AppSidebar className="hidden w-56 shrink-0 border-r border-border bg-background-subtle dark:bg-panel lg:flex" />
 
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 flex lg:hidden">

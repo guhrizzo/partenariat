@@ -16,7 +16,13 @@ export function AppSidebar({ className }: { className?: string }) {
   const pathname = usePathname();
 
   return (
-    <nav className={cn("flex h-full flex-col gap-0.5 p-2", className)}>
+    // Sem `h-full` aqui: a altura vem do wrapper `<aside>` em app-shell.tsx
+    // (que usa `self-stretch` no flex column do pai). O `h-full` forçava o
+    // `<nav>` a 100% do wrapper, mas como o wrapper não tem altura
+    // intrínseca quando é o item mais curto do flex, o nav colapsava para
+    // a altura do conteúdo (lista de links), fazendo o bg/border não
+    // cobrirem toda a coluna.
+    <nav className={cn("flex flex-col gap-0.5 p-2", className)}>
       <Link
         href="/dashboard"
         className="mb-2 flex cursor-pointer items-center px-2 py-1.5 text-[15px] font-semibold tracking-tight text-foreground"
