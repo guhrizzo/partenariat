@@ -21,6 +21,11 @@ export async function deleteContractAction(contractId: string): Promise<ActionRe
     };
   }
 
-  revalidatePath("/contracts");
+  try {
+    revalidatePath("/contracts");
+  } catch (error) {
+    console.error("Falha ao revalidar /contracts após exclusão de contrato", error);
+  }
+
   return { success: true };
 }
