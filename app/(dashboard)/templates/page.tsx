@@ -25,7 +25,7 @@ export default async function TemplatesPage() {
           Crie e edite os modelos usados para gerar seus contratos.
         </p>
       </div>
-      <TemplatesDataTable templates={serializedTemplates as any} />
+      <TemplatesDataTable templates={serializedTemplates} />
     </div>
   );
 }

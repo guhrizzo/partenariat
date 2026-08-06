@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
+import crypto from "node:crypto";
 import { getPayment, updatePaymentStatus } from "@/features/payments/repositories/payment-repository";
 import { extractIp } from "@/lib/security/ip";
 import { checkRateLimit } from "@/lib/security/rate-limit";
@@ -16,6 +18,46 @@ function mapMercadoPagoStatus(status: string): PaymentStatus {
       return "failed";
     default:
       return "pending";
+  }
+}
+
+/**
+ * Valida a assinatura HMAC-SHA256 enviada pelo Mercado Pago nos webhooks v2.
+ *
+ * Se MERCADOPAGO_WEBHOOK_SECRET estiver configurado, exigimos o header
+ * `x-signature` com `v1=` cujo HMAC bata. Se não estiver configurado, aceitamos
+ * sem validar (modo dev) — a MP já confere a URL de destino, então é defesa em
+ * profundidade, não autorização. Como sempre respondemos 200 independente do
+ * erro, um signature inválida apenas é descartada em silêncio.
+ */
+function verifyMercadoPagoSignature(
+  headers: Headers,
+  dataId: string,
+  urlSearchParams: URLSearchParams
+): boolean {
+  const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
+  if (!secret) return true;
+
+  const signatureHeader = headers.get("x-signature");
+  if (!signatureHeader) return false;
+
+  const parts = Object.fromEntries(
+    signatureHeader.split(",").map((kv) => kv.split("=").map((s) => s.trim()))
+  );
+  const ts = parts.ts;
+  const v1 = parts.v1;
+  if (!ts || !v1) return false;
+
+  const requestId = headers.get("x-request-id") ?? "";
+
+  // Versão 1 do template de assinatura da MP (data.id vinda no body).
+  const manifest = `id:${dataId};request-id:${requestId};ts:${ts};`;
+  const expected = crypto.createHmac("sha256", secret).update(manifest).digest("hex");
+
+  try {
+    return crypto.timingSafeEqual(Buffer.from(v1, "hex"), Buffer.from(expected, "hex"));
+  } catch {
+    return false;
   }
 }
 
@@ -53,6 +95,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   }
 
+  if (!verifyMercadoPagoSignature(request.headers, String(paymentId), url.searchParams)) {
+    console.warn("Webhook do Mercado Pago rejeitado por assinatura inválida", { paymentId });
+    return NextResponse.json({ received: true });
+  }
+
   const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
   if (!accessToken) {
     console.error("Webhook do Mercado Pago recebido, mas MERCADOPAGO_ACCESS_TOKEN não está configurado.");
@@ -79,6 +126,9 @@ export async function POST(request: Request) {
   }
 
   await updatePaymentStatus(payment.id, mapMercadoPagoStatus(data.status));
+
+  revalidatePath(`/contracts/${payment.contractId}`);
+  revalidatePath("/contracts");
 
   return NextResponse.json({ received: true });
 }

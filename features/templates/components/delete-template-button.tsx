@@ -16,7 +16,7 @@ import {
 import { useDeleteTemplate } from "@/features/templates/hooks";
 import type { Template } from "@/types";
 
-export function DeleteTemplateButton({ template }: { template: Template }) {
+export function DeleteTemplateButton({ template }: { template: Pick<Template, "id" | "name"> }) {
   const [open, setOpen] = React.useState(false);
   const { deleteTemplate, isPending } = useDeleteTemplate(() => setOpen(false));
 
