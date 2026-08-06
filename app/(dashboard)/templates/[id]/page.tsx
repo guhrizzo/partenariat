@@ -26,9 +26,15 @@ export default async function TemplateEditorPage({ params }: TemplateEditorPageP
   const customFields = await listCustomFieldDefinitions(session.organizationId);
   const availableFields = [...DEFAULT_FIELD_DEFINITIONS, ...customFields];
 
+  const serializedTemplate = {
+    ...template,
+    createdAt: template.createdAt.toISOString(),
+    updatedAt: template.updatedAt.toISOString(),
+  };
+
   return (
     <TemplateEditor
-      template={template}
+      template={serializedTemplate as any}
       organizationId={session.organizationId}
       initialFields={availableFields}
     />

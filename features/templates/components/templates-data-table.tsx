@@ -12,7 +12,12 @@ import { DeleteTemplateButton } from "@/features/templates/components/delete-tem
 import { useDuplicateTemplate } from "@/features/templates/hooks";
 import type { Template } from "@/types";
 
-export function TemplatesDataTable({ templates }: { templates: Template[] }) {
+type SerializedTemplate = Omit<Template, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
+export function TemplatesDataTable({ templates }: { templates: SerializedTemplate[] }) {
   const [search, setSearch] = React.useState("");
   const { duplicateTemplate } = useDuplicateTemplate();
 
@@ -22,7 +27,7 @@ export function TemplatesDataTable({ templates }: { templates: Template[] }) {
     return templates.filter((template) => template.name.toLowerCase().includes(query));
   }, [templates, search]);
 
-  const columns: DataTableColumn<Template>[] = [
+  const columns: DataTableColumn<SerializedTemplate>[] = [
     {
       key: "name",
       header: "Nome",
@@ -48,7 +53,7 @@ export function TemplatesDataTable({ templates }: { templates: Template[] }) {
     {
       key: "updatedAt",
       header: "Atualizado em",
-      render: (template) => template.updatedAt.toLocaleDateString("pt-BR"),
+      render: (template) => new Date(template.updatedAt).toLocaleDateString("pt-BR"),
     },
     {
       key: "actions",

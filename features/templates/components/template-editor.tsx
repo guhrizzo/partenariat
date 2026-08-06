@@ -9,8 +9,13 @@ import { BlockCanvas } from "@/features/templates/components/block-canvas";
 import { useBlockEditor, useSaveTemplate } from "@/features/templates/hooks";
 import type { FieldDefinition, Template } from "@/types";
 
+type SerializedTemplate = Omit<Template, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
 interface TemplateEditorProps {
-  template: Template;
+  template: SerializedTemplate;
   organizationId: string;
   initialFields: FieldDefinition[];
 }

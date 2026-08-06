@@ -11,6 +11,12 @@ export default async function TemplatesPage() {
   const session = await verifySession();
   const templates = await listTemplates(session.organizationId);
 
+  const serializedTemplates = templates.map((t) => ({
+    ...t,
+    createdAt: t.createdAt.toISOString(),
+    updatedAt: t.updatedAt.toISOString(),
+  }));
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -19,7 +25,7 @@ export default async function TemplatesPage() {
           Crie e edite os modelos usados para gerar seus contratos.
         </p>
       </div>
-      <TemplatesDataTable templates={templates} />
+      <TemplatesDataTable templates={serializedTemplates as any} />
     </div>
   );
 }
