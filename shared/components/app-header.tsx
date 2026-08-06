@@ -1,5 +1,7 @@
 "use client";
 
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { LogOut, Menu } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/design-system/components/avatar";
 import { Button } from "@/design-system/components/button";
@@ -24,6 +26,16 @@ function initials(name: string) {
 }
 
 export function AppHeader({ organizationName, userName, onOpenSidebar }: AppHeaderProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleLogout() {
+    startTransition(async () => {
+      await logoutAction();
+      router.push("/login");
+    });
+  }
+
   return (
     <header className="flex h-11 items-center justify-between gap-4 border-b border-border bg-background-subtle px-3 dark:bg-panel-header sm:px-4">
       <div className="flex items-center gap-3">
@@ -51,16 +63,17 @@ export function AppHeader({ organizationName, userName, onOpenSidebar }: AppHead
             <AvatarFallback>{initials(userName)}</AvatarFallback>
           </Avatar>
         </button>
-        <form action={logoutAction}>
-          <button
-            type="submit"
-            aria-label="Sair"
-            className="flex size-8 cursor-pointer items-center justify-center rounded-sm text-foreground-muted transition-colors hover:bg-panel-hover hover:text-foreground"
-          >
-            <LogOut className="size-4" />
-          </button>
-        </form>
+        <button
+          type="button"
+          aria-label="Sair"
+          disabled={isPending}
+          onClick={handleLogout}
+          className="flex size-8 cursor-pointer items-center justify-center rounded-sm text-foreground-muted transition-colors hover:bg-panel-hover hover:text-foreground disabled:opacity-50"
+        >
+          <LogOut className="size-4" />
+        </button>
       </div>
     </header>
   );
 }
+
