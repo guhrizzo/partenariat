@@ -16,7 +16,3 @@ export function getResendClient(): Resend {
 }
 
 export const EMAIL_FROM = process.env.RESEND_FROM_EMAIL ?? "PARTENARIAT <onboarding@resend.dev>";
-
-export function getAppUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-}

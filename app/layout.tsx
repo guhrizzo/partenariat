@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { ThemeProvider } from "@/shared/providers/theme-provider";
 import { ToastProvider } from "@/shared/providers/toast-provider";
+import { OfflineBanner } from "@/shared/components/offline-banner";
+import { RegisterServiceWorker } from "@/lib/pwa/register-service-worker";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,6 +20,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "PARTENARIAT",
   description: "Gestão de contratos eletrônicos para freelancers, agências e pequenos negócios.",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1e1e1e" },
+  ],
 };
 
 // Roda antes da hidratação para aplicar o tema salvo sem flash visual.
@@ -49,7 +58,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {themeInitScript}
         </Script>
         <ThemeProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <RegisterServiceWorker />
+            <OfflineBanner />
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -3,7 +3,7 @@ import { adminDb } from "@/firebase/admin";
 import { COLLECTIONS } from "@/constants/firestore";
 import { firestoreConverter } from "@/firebase/converters/firestore-converter";
 import { generateSecureToken } from "@/lib/security/tokens";
-import type { Contract, ContractFieldValue } from "@/types";
+import type { Contract, ContractFieldValue, PaymentProvider } from "@/types";
 
 const converter = firestoreConverter<Contract>();
 const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -82,6 +82,8 @@ interface CreateContractRepoInput {
   templateVersion: number;
   clientId: string;
   fieldValues: Record<string, ContractFieldValue>;
+  paymentAmount: number | null;
+  paymentProvider: PaymentProvider | null;
 }
 
 export async function createContract(
@@ -104,6 +106,8 @@ export async function createContract(
     tokenExpiresAt: new Date(now.getTime() + TOKEN_TTL_MS),
     pdfUrl: null,
     validationCode: null,
+    paymentAmount: input.paymentAmount,
+    paymentProvider: input.paymentProvider,
     createdAt: now,
     sentAt: null,
     viewedAt: null,

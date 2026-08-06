@@ -1,3 +1,5 @@
+import type { PaymentProvider } from "./payment";
+
 export type ContractStatus =
   | "draft"
   | "sent"
@@ -23,6 +25,9 @@ export interface Contract {
   pdfUrl: string | null;
   /** Código curto e legível por humanos, impresso no PDF para uso em /validate/[codigo]. */
   validationCode: string | null;
+  /** Cobrança opcional pós-assinatura. Em reais (não centavos). Null = sem cobrança configurada. */
+  paymentAmount: number | null;
+  paymentProvider: PaymentProvider | null;
   createdAt: Date;
   sentAt: Date | null;
   viewedAt: Date | null;

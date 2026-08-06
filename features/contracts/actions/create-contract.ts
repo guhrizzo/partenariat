@@ -32,6 +32,8 @@ export async function createContractAction(input: CreateContractInput): Promise<
       templateVersion: template.version,
       clientId: parsed.data.clientId,
       fieldValues: parsed.data.fieldValues,
+      paymentAmount: parsed.data.paymentAmount,
+      paymentProvider: parsed.data.paymentProvider,
     });
 
     await logContractEvent(contract.id, "created", session.userId);

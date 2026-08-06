@@ -8,7 +8,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/design-system/compon
 import { BlockPreview } from "@/features/templates/components/block-preview";
 import { useToast } from "@/shared/providers/toast-provider";
 import { useCancelContract, useRemindContract, useSendContract } from "@/features/contracts/hooks";
-import type { Client, Contract, Template } from "@/types";
+import type { Client, Contract, Payment, Template } from "@/types";
+
+const PAYMENT_STATUS_LABEL: Record<Payment["status"], string> = {
+  pending: "Pendente",
+  paid: "Pago",
+  failed: "Falhou",
+  refunded: "Reembolsado",
+};
+
+const PAYMENT_STATUS_VARIANT: Record<Payment["status"], NonNullable<BadgeProps["variant"]>> = {
+  pending: "warning",
+  paid: "success",
+  failed: "destructive",
+  refunded: "default",
+};
 
 const STATUS_LABEL: Record<Contract["status"], string> = {
   draft: "Rascunho",
@@ -33,9 +47,16 @@ interface ContractDetailProps {
   template: Template;
   client: Client;
   pdfDownloadUrl: string | null;
+  latestPayment: Payment | null;
 }
 
-export function ContractDetail({ contract, template, client, pdfDownloadUrl }: ContractDetailProps) {
+export function ContractDetail({
+  contract,
+  template,
+  client,
+  pdfDownloadUrl,
+  latestPayment,
+}: ContractDetailProps) {
   const { toast } = useToast();
   const { sendContract, isPending: isSending } = useSendContract();
   const { cancelContract, isPending: isCancelling } = useCancelContract();
@@ -135,6 +156,33 @@ export function ContractDetail({ contract, template, client, pdfDownloadUrl }: C
               </Button>
             ) : (
               <span className="text-xs text-foreground-muted">PDF ainda não disponível</span>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {contract.paymentAmount && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Cobrança</CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center justify-between gap-2">
+            <div>
+              <p className="text-sm text-foreground">
+                {contract.paymentAmount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                {" via "}
+                {contract.paymentProvider === "mercadopago" ? "Mercado Pago" : contract.paymentProvider}
+              </p>
+              <p className="text-xs text-foreground-muted">
+                {latestPayment
+                  ? "Cobrança iniciada pelo cliente após a assinatura."
+                  : "Aguardando o cliente assinar e iniciar o pagamento."}
+              </p>
+            </div>
+            {latestPayment && (
+              <Badge variant={PAYMENT_STATUS_VARIANT[latestPayment.status]}>
+                {PAYMENT_STATUS_LABEL[latestPayment.status]}
+              </Badge>
             )}
           </CardContent>
         </Card>

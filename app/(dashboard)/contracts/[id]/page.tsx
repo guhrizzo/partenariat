@@ -5,6 +5,7 @@ import { getContract } from "@/features/contracts/repositories/contract-reposito
 import { getTemplate } from "@/features/templates/repositories/template-repository";
 import { getClient } from "@/features/clients/repositories/client-repository";
 import { getSignedDownloadUrl } from "@/lib/storage/signed-url";
+import { listPaymentsByContract } from "@/features/payments/repositories/payment-repository";
 import { ContractDetail } from "@/features/contracts/components";
 
 export const metadata: Metadata = {
@@ -33,9 +34,18 @@ export default async function ContractDetailPage({ params }: ContractDetailPageP
     notFound();
   }
 
-  const pdfDownloadUrl = contract.pdfUrl ? await getSignedDownloadUrl(contract.pdfUrl) : null;
+  const [pdfDownloadUrl, payments] = await Promise.all([
+    contract.pdfUrl ? getSignedDownloadUrl(contract.pdfUrl) : Promise.resolve(null),
+    listPaymentsByContract(contract.id),
+  ]);
 
   return (
-    <ContractDetail contract={contract} template={template} client={client} pdfDownloadUrl={pdfDownloadUrl} />
+    <ContractDetail
+      contract={contract}
+      template={template}
+      client={client}
+      pdfDownloadUrl={pdfDownloadUrl}
+      latestPayment={payments[0] ?? null}
+    />
   );
 }

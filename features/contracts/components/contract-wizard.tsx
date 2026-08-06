@@ -9,9 +9,10 @@ import { EmptyState } from "@/design-system/components/empty-state";
 import { BlockPreview } from "@/features/templates/components/block-preview";
 import { extractFieldKeys } from "@/features/templates/lib/extract-field-keys";
 import { ContractFieldsForm } from "@/features/contracts/components/contract-fields-form";
+import { ContractPaymentStep } from "@/features/contracts/components/contract-payment-step";
 import { useCreateContract } from "@/features/contracts/hooks";
 import { cn } from "@/shared/utils/cn";
-import type { Client, ContractFieldValue, FieldDefinition, Template } from "@/types";
+import type { Client, ContractFieldValue, FieldDefinition, PaymentProvider, Template } from "@/types";
 
 interface ContractWizardProps {
   templates: Template[];
@@ -19,13 +20,16 @@ interface ContractWizardProps {
   availableFields: FieldDefinition[];
 }
 
-const STEPS = ["Modelo", "Cliente", "Campos", "Preview"] as const;
+const STEPS = ["Modelo", "Cliente", "Campos", "Pagamento", "Preview"] as const;
 
 export function ContractWizard({ templates, clients, availableFields }: ContractWizardProps) {
   const [step, setStep] = useState(0);
   const [templateId, setTemplateId] = useState<string | null>(null);
   const [clientId, setClientId] = useState<string | null>(null);
   const [fieldValues, setFieldValues] = useState<Record<string, ContractFieldValue>>({});
+  const [paymentEnabled, setPaymentEnabled] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
+  const [paymentProvider, setPaymentProvider] = useState<PaymentProvider | null>(null);
   const { createContract, isPending } = useCreateContract();
 
   const template = templates.find((item) => item.id === templateId) ?? null;
@@ -43,7 +47,13 @@ export function ContractWizard({ templates, clients, availableFields }: Contract
 
   function handleCreate() {
     if (!template || !client) return;
-    createContract({ templateId: template.id, clientId: client.id, fieldValues });
+    createContract({
+      templateId: template.id,
+      clientId: client.id,
+      fieldValues,
+      paymentAmount: paymentEnabled ? paymentAmount : null,
+      paymentProvider: paymentEnabled ? paymentProvider : null,
+    });
   }
 
   return (
@@ -143,7 +153,20 @@ export function ContractWizard({ templates, clients, availableFields }: Contract
         />
       )}
 
-      {step === 3 && template && <BlockPreview blocks={template.blocks} fieldValues={fieldValues} />}
+      {step === 3 && (
+        <ContractPaymentStep
+          enabled={paymentEnabled}
+          amount={paymentAmount}
+          provider={paymentProvider}
+          onChange={(config) => {
+            setPaymentEnabled(config.enabled);
+            setPaymentAmount(config.amount);
+            setPaymentProvider(config.provider);
+          }}
+        />
+      )}
+
+      {step === 4 && template && <BlockPreview blocks={template.blocks} fieldValues={fieldValues} />}
 
       <div className="flex items-center justify-between">
         <Button

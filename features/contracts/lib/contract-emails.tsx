@@ -1,6 +1,6 @@
 import "server-only";
 import { sendEmail } from "@/lib/emails/send-email";
-import { getAppUrl } from "@/lib/emails/resend-client";
+import { getAppUrl } from "@/lib/env";
 import { ContractSentEmail } from "@/lib/emails/templates/contract-sent-email";
 import { ContractSignedEmail } from "@/lib/emails/templates/contract-signed-email";
 import type { Client, Contract, Template } from "@/types";

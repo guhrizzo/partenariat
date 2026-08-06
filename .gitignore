@@ -12,10 +12,18 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 # next.js
 /.next/
 /out/
+
+# serwist (service worker gerado pelo build — ver serwist.config.mjs)
+/public/sw.js
+/public/sw.js.map
 
 # production
 /build

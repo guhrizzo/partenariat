@@ -9,6 +9,8 @@ import { getClient } from "@/features/clients/repositories/client-repository";
 import { logContractEvent } from "@/features/contracts/repositories/audit-log-repository";
 import { BlockPreview } from "@/features/templates/components/block-preview";
 import { ProtectedDocument, SignContractForm } from "@/features/contracts/components/public";
+import { listPaymentsByContract } from "@/features/payments/repositories/payment-repository";
+import { PayNowButton } from "@/features/payments/components/pay-now-button";
 
 export const metadata: Metadata = {
   title: "Assinatura de contrato — PARTENARIAT",
@@ -91,6 +93,10 @@ export default async function SignPage({ params }: SignPageProps) {
   }
 
   if (contract.status === "signed") {
+    const payments = await listPaymentsByContract(contract.id);
+    const isPaid = payments.some((payment) => payment.status === "paid");
+    const showPayButton = contract.paymentAmount && contract.paymentProvider && !isPaid;
+
     return (
       <div className="flex flex-col gap-6">
         <StatusMessage
@@ -106,6 +112,10 @@ export default async function SignPage({ params }: SignPageProps) {
             — valide em <span className="font-mono">/validate/{contract.validationCode}</span>
           </p>
         )}
+        {isPaid && (
+          <p className="text-center text-sm font-medium text-emerald-600">Pagamento confirmado.</p>
+        )}
+        {showPayButton && <PayNowButton token={token} amount={contract.paymentAmount as number} />}
         <ProtectedDocument>
           <BlockPreview blocks={template.blocks} fieldValues={contract.fieldValues} />
         </ProtectedDocument>
