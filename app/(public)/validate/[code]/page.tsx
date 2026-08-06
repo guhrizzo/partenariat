@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { headers } from "next/headers";
+import { Clock, CheckCircle2, XCircle } from "lucide-react";
 import { getContractByValidationCode } from "@/features/contracts/repositories/contract-repository";
 import { getTemplate } from "@/features/templates/repositories/template-repository";
 import { listSignatures } from "@/features/contracts/repositories/signature-repository";
 import { getSignedDownloadUrl } from "@/lib/storage/signed-url";
+import { extractIp } from "@/lib/security/ip";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 
 export const metadata: Metadata = {
   title: "Validar contrato — PARTENARIAT",
@@ -15,6 +18,23 @@ interface ValidatePageProps {
 
 export default async function ValidatePage({ params }: ValidatePageProps) {
   const { code } = await params;
+
+  // Código de validação é curto e público por natureza (impresso no PDF) —
+  // sem limite por IP aqui, seria trivial varrer o espaço de códigos.
+  const ip = extractIp(await headers());
+  const viewLimit = await checkRateLimit(`validate-view:ip:${ip}`, 60, 60);
+  if (!viewLimit.allowed) {
+    return (
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-10 text-center">
+        <Clock className="size-10 text-foreground-muted" />
+        <p className="text-lg font-medium text-foreground">Muitas tentativas</p>
+        <p className="text-sm text-foreground-muted">
+          Você fez muitas requisições em pouco tempo. Aguarde um momento e tente novamente.
+        </p>
+      </div>
+    );
+  }
+
   const contract = await getContractByValidationCode(code.toUpperCase());
 
   if (!contract || contract.status !== "signed") {

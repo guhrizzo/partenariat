@@ -4,6 +4,8 @@ import { randomUUID } from "node:crypto";
 import { headers } from "next/headers";
 import { adminStorage, adminAuth } from "@/firebase/admin";
 import { sha256 } from "@/lib/security/hash";
+import { extractIp } from "@/lib/security/ip";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { onlyDigits } from "@/lib/validators/br-documents";
 import { signContractSchema, type SignContractInput } from "@/schemas/signature.schema";
 import { getTemplate } from "@/features/templates/repositories/template-repository";
@@ -19,12 +21,6 @@ interface ActionResult {
   error?: string;
 }
 
-function extractIp(headerList: Headers): string {
-  const forwarded = headerList.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]?.trim() || "unknown";
-  return headerList.get("x-real-ip") ?? "unknown";
-}
-
 /**
  * Sem `verifySession()` de propósito: quem assina nunca tem conta no
  * sistema. O token de 256 bits é a única autorização. IP e user agent são
@@ -35,6 +31,17 @@ export async function signContractPublicAction(
   token: string,
   input: SignContractInput
 ): Promise<ActionResult> {
+  const headerList = await headers();
+  const ip = extractIp(headerList);
+
+  const [ipLimit, tokenLimit] = await Promise.all([
+    checkRateLimit(`sign:ip:${ip}`, 30, 300),
+    checkRateLimit(`sign:token:${token}`, 8, 300),
+  ]);
+  if (!ipLimit.allowed || !tokenLimit.allowed) {
+    return { success: false, error: "Muitas tentativas. Aguarde um momento e tente novamente." };
+  }
+
   const parsed = signContractSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
@@ -53,8 +60,6 @@ export async function signContractPublicAction(
     return { success: false, error: "Modelo do contrato não encontrado." };
   }
 
-  const headerList = await headers();
-  const ip = extractIp(headerList);
   const userAgent = headerList.get("user-agent") ?? "unknown";
 
   const documentHash = sha256(

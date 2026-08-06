@@ -5,13 +5,13 @@ export function createBlock(type: BlockType): Block {
 
   switch (type) {
     case "heading":
-      return { id, type, text: "Título", level: 1 };
+      return { id, type, text: "Título", level: 1, font: "inter" };
     case "subheading":
-      return { id, type, text: "Subtítulo" };
+      return { id, type, text: "Subtítulo", font: "inter" };
     case "paragraph":
-      return { id, type, html: "<p>Digite o texto aqui...</p>" };
+      return { id, type, html: "<p>Digite o texto aqui...</p>", font: "inter" };
     case "list":
-      return { id, type, style: "bullet", items: ["Item 1"] };
+      return { id, type, style: "bullet", items: ["Item 1"], font: "inter" };
     case "table":
       return {
         id,

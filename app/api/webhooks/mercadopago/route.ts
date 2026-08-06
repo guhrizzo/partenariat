@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getPayment, updatePaymentStatus } from "@/features/payments/repositories/payment-repository";
+import { extractIp } from "@/lib/security/ip";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import type { PaymentStatus } from "@/types";
 
 function mapMercadoPagoStatus(status: string): PaymentStatus {
@@ -24,6 +26,15 @@ function mapMercadoPagoStatus(status: string): PaymentStatus {
  * com nosso próprio access token antes de gravar qualquer coisa.
  */
 export async function POST(request: Request) {
+  // Sempre responde 200 mesmo aqui: um 429 faria o Mercado Pago reenviar a
+  // notificação sem parar (mesmo comportamento de erro interno, ver
+  // comentário abaixo) — só descartamos a requisição em excesso.
+  const ip = extractIp(request.headers);
+  const ipLimit = await checkRateLimit(`mp-webhook:ip:${ip}`, 60, 60);
+  if (!ipLimit.allowed) {
+    return NextResponse.json({ received: true });
+  }
+
   const url = new URL(request.url);
   const queryTopic = url.searchParams.get("topic") ?? url.searchParams.get("type");
   const queryId = url.searchParams.get("id") ?? url.searchParams.get("data.id");

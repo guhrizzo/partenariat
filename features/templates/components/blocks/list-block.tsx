@@ -2,6 +2,8 @@
 
 import { Plus, X } from "lucide-react";
 import { Button } from "@/design-system/components/button";
+import { FontPicker } from "@/features/templates/components/font-picker";
+import { getFontFamily } from "@/features/templates/constants/fonts";
 import { cn } from "@/shared/utils/cn";
 import type { ListBlock } from "@/types";
 
@@ -29,7 +31,7 @@ export function ListBlockComponent({ block, onChange }: ListBlockProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="hidden gap-1 group-hover/block:flex">
+      <div className="hidden items-center gap-1 group-hover/block:flex">
         {(["bullet", "numbered"] as const).map((style) => (
           <button
             key={style}
@@ -43,8 +45,16 @@ export function ListBlockComponent({ block, onChange }: ListBlockProps) {
             {style === "bullet" ? "• Marcadores" : "1. Números"}
           </button>
         ))}
+        <div className="mx-1 h-3.5 w-px bg-border" />
+        <FontPicker
+          value={block.font}
+          onChange={(font) => onChange({ ...block, font })}
+        />
       </div>
-      <Tag className={cn("flex flex-col gap-1 pl-5", block.style === "bullet" ? "list-disc" : "list-decimal")}>
+      <Tag
+        className={cn("flex flex-col gap-1 pl-5", block.style === "bullet" ? "list-disc" : "list-decimal")}
+        style={{ fontFamily: getFontFamily(block.font) }}
+      >
         {block.items.map((item, index) => (
           <li key={index} className="group/item flex items-center gap-2">
             <input

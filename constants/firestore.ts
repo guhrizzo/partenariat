@@ -13,4 +13,5 @@ export const COLLECTIONS = {
   auditLog: "auditLog",
   notifications: "notifications",
   payments: "payments",
+  rateLimits: "rateLimits",
 } as const;

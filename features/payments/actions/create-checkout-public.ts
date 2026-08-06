@@ -1,6 +1,9 @@
 "use server";
 
+import { headers } from "next/headers";
 import { getAppUrl } from "@/lib/env";
+import { extractIp } from "@/lib/security/ip";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { getContractByToken } from "@/features/contracts/repositories/contract-repository";
 import { getTemplate } from "@/features/templates/repositories/template-repository";
 import { createPayment, setPaymentProviderRef } from "@/features/payments/repositories/payment-repository";
@@ -14,6 +17,15 @@ interface ActionResult {
 
 /** Público (sem verifySession): quem paga é o signatário, que nunca tem conta no sistema. */
 export async function createCheckoutPublicAction(token: string): Promise<ActionResult> {
+  const ip = extractIp(await headers());
+  const [ipLimit, tokenLimit] = await Promise.all([
+    checkRateLimit(`checkout:ip:${ip}`, 20, 300),
+    checkRateLimit(`checkout:token:${token}`, 5, 300),
+  ]);
+  if (!ipLimit.allowed || !tokenLimit.allowed) {
+    return { success: false, error: "Muitas tentativas. Aguarde um momento e tente novamente." };
+  }
+
   const contract = await getContractByToken(token);
   if (!contract) {
     return { success: false, error: "Contrato não encontrado." };

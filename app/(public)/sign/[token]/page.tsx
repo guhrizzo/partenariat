@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { CheckCircle2, Clock, XCircle, type LucideIcon } from "lucide-react";
+import { extractIp } from "@/lib/security/ip";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import {
   getContractByToken,
   markContractViewed,
@@ -40,6 +43,21 @@ function StatusMessage({
 
 export default async function SignPage({ params }: SignPageProps) {
   const { token } = await params;
+
+  // Limita por IP mesmo antes de olhar o token: essa página é o alvo óbvio
+  // pra quem quiser tentar enumerar tokens válidos por força bruta.
+  const ip = extractIp(await headers());
+  const viewLimit = await checkRateLimit(`sign-view:ip:${ip}`, 60, 60);
+  if (!viewLimit.allowed) {
+    return (
+      <StatusMessage
+        icon={Clock}
+        title="Muitas tentativas"
+        description="Você fez muitas requisições em pouco tempo. Aguarde um momento e tente novamente."
+      />
+    );
+  }
+
   const contract = await getContractByToken(token);
 
   if (!contract) {

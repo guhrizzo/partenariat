@@ -1,3 +1,13 @@
+export type FontFamily =
+  | "inter"
+  | "merriweather"
+  | "montserrat"
+  | "roboto"
+  | "lato"
+  | "open-sans"
+  | "courier-new"
+  | "playfair";
+
 export type BlockType =
   | "heading"
   | "subheading"
@@ -23,22 +33,26 @@ export interface HeadingBlock extends BlockBase {
   type: "heading";
   text: string;
   level: 1 | 2 | 3;
+  font?: FontFamily;
 }
 
 export interface SubheadingBlock extends BlockBase {
   type: "subheading";
   text: string;
+  font?: FontFamily;
 }
 
 export interface ParagraphBlock extends BlockBase {
   type: "paragraph";
   html: string;
+  font?: FontFamily;
 }
 
 export interface ListBlock extends BlockBase {
   type: "list";
   style: "bullet" | "numbered";
   items: string[];
+  font?: FontFamily;
 }
 
 export interface TableBlock extends BlockBase {
