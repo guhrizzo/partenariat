@@ -30,6 +30,14 @@ const cspHeader = `
   .replace(/\s{2,}/g, " ")
   .trim();
 
+// `firebase-admin` precisa de `require` nativo: ele depende de `jwks-rsa`
+// (CJS), que faz `require("jose")` — mas `jose` é ESM puro, e o Turbopack
+// do Next 16 não consegue resolver isso via empacotamento, gerando o
+// `ERR_REQUIRE_ESM` em runtime na Vercel. Mantemos o pacote fora do bundle
+// para que o Node faça o `require` direto em produção.
+// https://nextjs.org/docs/app/api-reference/config/next-config-js/serverExternalPackages
+const serverExternalPackages = ["firebase-admin"];
+
 const nextConfig: NextConfig = {
   experimental: {
     // Retenta navegações/Server Actions automaticamente quando a conexão
@@ -39,6 +47,7 @@ const nextConfig: NextConfig = {
     // https://nextjs.org/docs/app/api-reference/config/next-config-js/useOffline
     useOffline: true,
   },
+  serverExternalPackages,
   async headers() {
     return [
       {
