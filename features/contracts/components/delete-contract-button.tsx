@@ -30,7 +30,8 @@ export function DeleteContractButton({ contractId, label }: { contractId: string
         <DialogHeader>
           <DialogTitle>Remover contrato</DialogTitle>
           <DialogDescription>
-            Tem certeza que deseja remover este rascunho? Essa ação não pode ser desfeita.
+            Tem certeza que deseja remover o contrato &ldquo;{label}&rdquo;? Essa ação não pode ser
+            desfeita.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

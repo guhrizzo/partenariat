@@ -77,7 +77,7 @@ export function ContractsDataTable({ rows }: { rows: ContractRow[] }) {
       header: "",
       className: "text-right",
       render: (row) =>
-        row.contract.status === "draft" ? (
+        row.contract.status !== "signed" ? (
           <div className="flex justify-end">
             <DeleteContractButton contractId={row.contract.id} label={row.templateName} />
           </div>

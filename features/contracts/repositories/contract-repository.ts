@@ -137,12 +137,19 @@ export async function cancelContract(organizationId: string, contractId: string)
   await contractsCollection().doc(contractId).update({ status: "cancelled" });
 }
 
+/**
+ * Contratos assinados nunca podem ser removidos — são o registro/evidência
+ * da assinatura (e de eventual pagamento). Qualquer outro status pode.
+ * `recursiveDelete` também limpa as subcoleções `signatures`/`auditLog`
+ * do contrato; nos status permitidos aqui elas nunca chegam a existir
+ * (só são criadas a partir de `signed`), mas evita órfãos se isso mudar.
+ */
 export async function deleteContract(organizationId: string, contractId: string): Promise<void> {
   const current = await assertOwnership(organizationId, contractId);
-  if (current.status !== "draft") {
-    throw new Error("Apenas rascunhos podem ser removidos.");
+  if (current.status === "signed") {
+    throw new Error("Contratos assinados não podem ser removidos — cancele-os, se necessário.");
   }
-  await contractsCollection().doc(contractId).delete();
+  await adminDb.recursiveDelete(contractsCollection().doc(contractId));
 }
 
 /** Página pública /validate/[codigo] — o código é público por natureza (impresso no PDF), sem `organizationId`. */
