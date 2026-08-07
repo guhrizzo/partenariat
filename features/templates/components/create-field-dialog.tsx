@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/design-system/components/button";
 import { Input } from "@/design-system/components/input";
 import { Label } from "@/design-system/components/label";
+import { Select } from "@/design-system/components/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/design-system/components/dialog";
 import { useToast } from "@/shared/providers/toast-provider";
 import { createFieldDefinitionAction } from "@/features/templates/actions";
@@ -67,11 +68,7 @@ export function CreateFieldDialog({ open, onOpenChange, onCreated }: CreateField
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="field-type">Tipo</Label>
-            <select
-              id="field-type"
-              className="h-10 rounded-lg border border-border bg-card px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              {...register("type")}
-            >
+            <Select id="field-type" {...register("type")}>
               <option value="text">Texto</option>
               <option value="textarea">Texto longo</option>
               <option value="number">Número</option>
@@ -81,7 +78,7 @@ export function CreateFieldDialog({ open, onOpenChange, onCreated }: CreateField
               <option value="phone">Telefone</option>
               <option value="cpf">CPF</option>
               <option value="cnpj">CNPJ</option>
-            </select>
+            </Select>
           </div>
           <Button type="submit" disabled={isPending} className="mt-2">
             {isPending ? "Criando..." : "Criar campo"}

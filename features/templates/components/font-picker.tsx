@@ -14,7 +14,7 @@ export function FontPicker({ value = "inter", onChange }: FontPickerProps) {
       value={value}
       onChange={(e) => onChange(e.target.value as FontFamily)}
       onClick={(e) => e.stopPropagation()}
-      className="cursor-pointer rounded border-none bg-transparent px-1 py-0.5 text-xs text-foreground-muted outline-none ring-1 ring-border hover:bg-background-subtle focus:ring-primary"
+      className="cursor-pointer appearance-none rounded border-none bg-transparent px-1 py-0.5 text-xs text-foreground-muted outline-none ring-1 ring-border hover:bg-background-subtle focus:ring-primary"
       aria-label="Selecionar fonte"
     >
       {FONT_OPTIONS.map((font) => (

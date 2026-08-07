@@ -6,6 +6,7 @@
 
 /* ---------- LIGHT (papel + chrome neutro) ---------- */
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --background-subtle: #f4f4f5;
   --foreground: #18181b;
@@ -19,6 +20,7 @@
 }
 
 .light {
+  color-scheme: light;
   --background: #ffffff;
   --background-subtle: #f4f4f5;
   --foreground: #18181b;
@@ -35,6 +37,7 @@
    Chrome do app: mais escuro que o conteúdo. Essa hierarquia em 3 camadas
    (app bar → panel → conteúdo) é a marca registrada do CC. */
 .dark {
+  color-scheme: dark;
   --background: #1e1e1e;
   --background-subtle: #2d2d2d;
   --foreground: #d4d4d4;
@@ -49,6 +52,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not(.light):not(.dark) {
+    color-scheme: dark;
     --background: #1e1e1e;
     --background-subtle: #2d2d2d;
     --foreground: #d4d4d4;

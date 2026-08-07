@@ -145,10 +145,7 @@ export async function cancelContract(organizationId: string, contractId: string)
  * (só são criadas a partir de `signed`), mas evita órfãos se isso mudar.
  */
 export async function deleteContract(organizationId: string, contractId: string): Promise<void> {
-  const current = await assertOwnership(organizationId, contractId);
-  if (current.status === "signed") {
-    throw new Error("Contratos assinados não podem ser removidos — cancele-os, se necessário.");
-  }
+  await assertOwnership(organizationId, contractId);
   await adminDb.recursiveDelete(contractsCollection().doc(contractId));
 }
 

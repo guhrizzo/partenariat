@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/design-system/components/button";
 import { Input } from "@/design-system/components/input";
 import { Label } from "@/design-system/components/label";
+import { Select } from "@/design-system/components/select";
 import { createClientSchema, type CreateClientInput } from "@/schemas/client.schema";
 
 interface ClientFormProps {
@@ -47,14 +48,10 @@ export function ClientForm({ defaultValues, onSubmit, isPending, submitLabel }: 
       <div className="grid grid-cols-[7.5rem_1fr] gap-3">
         <div className="flex flex-col gap-2">
           <Label htmlFor="documentType">Tipo</Label>
-          <select
-            id="documentType"
-            className="h-10 rounded-lg border border-border bg-card px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            {...register("documentType")}
-          >
+          <Select id="documentType" {...register("documentType")}>
             <option value="cpf">CPF</option>
             <option value="cnpj">CNPJ</option>
-          </select>
+          </Select>
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="document">{documentType === "cpf" ? "CPF" : "CNPJ"}</Label>

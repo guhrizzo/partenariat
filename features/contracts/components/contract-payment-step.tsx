@@ -2,6 +2,7 @@
 
 import { Input } from "@/design-system/components/input";
 import { Label } from "@/design-system/components/label";
+import { Select } from "@/design-system/components/select";
 import type { PaymentProvider } from "@/types";
 
 interface PaymentConfig {
@@ -53,19 +54,18 @@ export function ContractPaymentStep({ enabled, amount, provider, onChange }: Con
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="paymentProvider">Forma de pagamento</Label>
-            <select
+            <Select
               id="paymentProvider"
               value={provider ?? "mercadopago"}
               onChange={(event) =>
                 onChange({ enabled, amount, provider: event.target.value as PaymentProvider })
               }
-              className="h-10 rounded-lg border border-border bg-card px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
               <option value="mercadopago">Mercado Pago (Pix ou cartão)</option>
               <option value="stripe" disabled>
                 Stripe (em breve)
               </option>
-            </select>
+            </Select>
           </div>
         </div>
       ) : (

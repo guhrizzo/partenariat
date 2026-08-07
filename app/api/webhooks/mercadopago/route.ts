@@ -117,11 +117,17 @@ export async function POST(request: Request) {
 
   const data = (await response.json()) as { external_reference?: string; status?: string };
   if (!data.external_reference || !data.status) {
+    console.error("Pagamento do Mercado Pago sem external_reference ou status", paymentId, data);
     return NextResponse.json({ received: true });
   }
 
   const payment = await getPayment(data.external_reference);
   if (!payment) {
+    console.error(
+      "external_reference do Mercado Pago não corresponde a nenhum Payment local",
+      data.external_reference,
+      paymentId
+    );
     return NextResponse.json({ received: true });
   }
 

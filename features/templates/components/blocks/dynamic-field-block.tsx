@@ -38,7 +38,7 @@ export function DynamicFieldBlockComponent({
       <select
         value={block.fieldKey}
         onChange={(event) => handleSelect(event.target.value)}
-        className="bg-transparent text-sm font-medium text-primary outline-none"
+        className="cursor-pointer appearance-none bg-transparent text-sm font-medium text-primary outline-none"
       >
         {!selectedField && <option value={block.fieldKey}>{block.placeholder}</option>}
         {availableFields.map((field) => (

@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, BellRing, Copy, Download, Send, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, BellRing, Copy, Download, Send, Trash2, XCircle } from "lucide-react";
 import { Badge, type BadgeProps } from "@/design-system/components/badge";
 import { Button } from "@/design-system/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/design-system/components/card";
 import { BlockPreview } from "@/features/templates/components/block-preview";
 import { useToast } from "@/shared/providers/toast-provider";
 import { useCancelContract, useRemindContract, useSendContract } from "@/features/contracts/hooks";
+import { DeleteContractButton } from "@/features/contracts/components/delete-contract-button";
 import type { Client, Contract, Payment, Template } from "@/types";
 
 const PAYMENT_STATUS_LABEL: Record<Payment["status"], string> = {
@@ -57,6 +59,7 @@ export function ContractDetail({
   pdfDownloadUrl,
   latestPayment,
 }: ContractDetailProps) {
+  const router = useRouter();
   const { toast } = useToast();
   const { sendContract, isPending: isSending } = useSendContract();
   const { cancelContract, isPending: isCancelling } = useCancelContract();
@@ -115,6 +118,15 @@ export function ContractDetail({
               <XCircle className="size-3.5" /> Cancelar
             </Button>
           )}
+          <DeleteContractButton
+            contractId={contract.id}
+            label={template.name}
+            triggerVariant="outline"
+            triggerSize="sm"
+            onDeleted={() => router.push("/contracts")}
+          >
+            <Trash2 className="size-3.5" /> Excluir
+          </DeleteContractButton>
         </div>
       </div>
 

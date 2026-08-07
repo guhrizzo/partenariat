@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { Trash2 } from "lucide-react";
-import { Button } from "@/design-system/components/button";
+import { Button, type ButtonProps } from "@/design-system/components/button";
+import { Input } from "@/design-system/components/input";
 import {
   Dialog,
   DialogClose,
@@ -15,25 +16,69 @@ import {
 } from "@/design-system/components/dialog";
 import { useDeleteContract } from "@/features/contracts/hooks";
 
-export function DeleteContractButton({ contractId, label }: { contractId: string; label: string }) {
+interface DeleteContractButtonProps {
+  contractId: string;
+  label: string;
+  onDeleted?: () => void;
+  /** Personaliza o botão que abre o diálogo. Padrão: ícone de lixeira. */
+  triggerVariant?: ButtonProps["variant"];
+  triggerSize?: ButtonProps["size"];
+  children?: React.ReactNode;
+}
+
+export function DeleteContractButton({
+  contractId,
+  label,
+  onDeleted,
+  triggerVariant = "ghost",
+  triggerSize = "icon",
+  children,
+}: DeleteContractButtonProps) {
   const [open, setOpen] = React.useState(false);
-  const { deleteContract, isPending } = useDeleteContract(() => setOpen(false));
+  const [confirmation, setConfirmation] = React.useState("");
+  const { deleteContract, isPending } = useDeleteContract(() => {
+    setOpen(false);
+    onDeleted?.();
+  });
+
+  const isConfirmed = confirmation === label;
+
+  function handleOpenChange(next: boolean) {
+    setOpen(next);
+    if (!next) setConfirmation("");
+  }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button type="button" variant="ghost" size="icon" aria-label={`Remover ${label}`}>
-          <Trash2 />
+        <Button type="button" variant={triggerVariant} size={triggerSize} aria-label={`Remover ${label}`}>
+          {children ?? <Trash2 />}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Remover contrato</DialogTitle>
           <DialogDescription>
-            Tem certeza que deseja remover o contrato &ldquo;{label}&rdquo;? Essa ação não pode ser
-            desfeita.
+            Essa ação não pode ser desfeita. Isso vai remover permanentemente o contrato e todos os
+            dados associados a ele.
           </DialogDescription>
         </DialogHeader>
+
+        <div className="flex flex-col gap-2">
+          <p className="text-[13px] text-foreground-muted">
+            Para confirmar, digite <span className="font-semibold text-foreground">{label}</span>{" "}
+            abaixo:
+          </p>
+          <Input
+            value={confirmation}
+            onChange={(event) => setConfirmation(event.target.value)}
+            placeholder={label}
+            autoComplete="off"
+            autoFocus
+            aria-label={`Digite "${label}" para confirmar`}
+          />
+        </div>
+
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="outline">
@@ -43,7 +88,7 @@ export function DeleteContractButton({ contractId, label }: { contractId: string
           <Button
             type="button"
             variant="destructive"
-            disabled={isPending}
+            disabled={!isConfirmed || isPending}
             onClick={() => deleteContract(contractId)}
           >
             {isPending ? "Removendo..." : "Remover"}
